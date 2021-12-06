@@ -30,4 +30,4 @@ $ npm install
 
 ```bash
 # development
-$ yarn run server
+$ npm run server
