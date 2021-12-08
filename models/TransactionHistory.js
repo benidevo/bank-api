@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 const Type = {
     DEBIT: 'DEBIT',
     CREDIT: 'CREDIT'
-}
+};
 
 const Title = {
     DEPOSIT: 'DEPOSIT',
     WITHDRAWAL: 'WITHDRAWAL',
     TRANSFER: 'TRANSFER'
-}
+};
 
 const TransactionHistorySchema = new Schema({
     title: {
@@ -23,7 +23,7 @@ const TransactionHistorySchema = new Schema({
         default: Date.now
     },
     description: {
-        type: String,
+        type: String
     },
     amount: {
         type: Number,
@@ -32,20 +32,20 @@ const TransactionHistorySchema = new Schema({
     type: {
         type: String,
         required: true,
-        enum: [Type.DEBIT, Type.CREDIT],
+        enum: [Type.DEBIT, Type.CREDIT]
     },
     account: {
         type: Schema.Types.ObjectId,
-        ref: 'Account',
+        ref: 'Account'
     },
     beneficiary: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'User'
     },
     sender: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
-    },
+        ref: 'User'
+    }
 });
 
 module.exports = mongoose.model('TransactionHistory', TransactionHistorySchema);

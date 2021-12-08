@@ -32,7 +32,11 @@ const UserSchema = new Schema({
     },
     transactionPin: {
         type: Number
-    }, 
-})
+    },
+    isActive: {
+        type: Boolean,
+        default: false
+    }
+});
 
 module.exports = mongoose.model('User', UserSchema);
