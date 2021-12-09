@@ -6,7 +6,6 @@ require('dotenv').config();
 const User = require('../models/User');
 const { sendMail } = require('../utils/index');
 
-
 exports.register = async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -40,7 +39,7 @@ exports.register = async function (req, res) {
         const text = `Hi ${firstName} ${lastName}, welcome to the Ben Bank.\n\nUse this code to verify your account: ${user.otp}`;
         sendMail(String(email), subject, text);
 
-        res.status(201).json({ msg: 'User created' });
+        res.status(201).json({ otp: user.otp });
     } catch (err) {
         if (err.code === 11000) {
             return res

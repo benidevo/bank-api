@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+const AccountNumbers = require('../models/accountNumbers');
+
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
 
@@ -25,4 +27,24 @@ exports.sendMail = async function (recipients, subject, text) {
         html: `<b>${text}</b>` // html body
     });
     return 'message sent';
+};
+
+exports.generateAccountNumber = async function (accountId) {
+    let accountNumber = '20';
+    for (let i = 0; i < 8; i++) {
+        accountNumber += Math.floor(Math.random() * 10);
+    }
+    numbers = new AccountNumbers({
+        number: Number(accountNumber),
+        account: accountId
+    });
+
+    try {
+        await numbers.save();
+    } catch (error) {
+        console.log.log(error.code);
+        generateAccountNumber(accountId);
+    }
+
+    return Number(accountNumber);
 };

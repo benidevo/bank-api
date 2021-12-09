@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const Type = {
+    SAVINGS: 'SAVINGS',
+    CURRENT: 'CURRENT'
+};
+
 const AccountSchema = new Schema({
     number: {
         type: Number,
@@ -23,7 +28,12 @@ const AccountSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'TransactionHistory'
         }
-    ]
+    ],
+    accountType: {
+        type: String,
+        enum: [Type.SAVINGS, Type.CURRENT],
+        default: Type.SAVINGS
+    }
 });
 
 module.exports = mongoose.model('Account', AccountSchema);

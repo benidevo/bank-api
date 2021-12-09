@@ -11,7 +11,7 @@ const {
     verifyEmailValidation,
     loginValidation,
     validateEmail
-} = require('../middlewares/validators');
+} = require('../middlewares/authValidators');
 const { auth } = require('../middlewares/auth');
 
 const router = express.Router();
