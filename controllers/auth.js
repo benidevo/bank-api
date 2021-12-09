@@ -18,6 +18,7 @@ exports.register = async function (req, res) {
             .status(422)
             .json({ errors: [{ msg: 'Passwords do not match' }] });
     }
+    
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);

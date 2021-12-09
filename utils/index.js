@@ -29,21 +29,10 @@ exports.sendMail = async function (recipients, subject, text) {
     return 'message sent';
 };
 
-exports.generateAccountNumber = async function (accountId) {
-    let accountNumber = '20';
+exports.generateAccountNumber = function () {
+    let accountNumber = '22';
     for (let i = 0; i < 8; i++) {
         accountNumber += Math.floor(Math.random() * 10);
-    }
-    numbers = new AccountNumbers({
-        number: Number(accountNumber),
-        account: accountId
-    });
-
-    try {
-        await numbers.save();
-    } catch (error) {
-        console.log.log(error.code);
-        generateAccountNumber(accountId);
     }
 
     return Number(accountNumber);

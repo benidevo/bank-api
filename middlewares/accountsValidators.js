@@ -11,3 +11,14 @@ exports.createAccountValidation = [
 exports.depositValidation = [
     check('amount', 'Amount is required').not().isEmpty()
 ];
+
+exports.withdrawValidation = [
+    check('amount', 'Amount is required').not().isEmpty(),
+    check('pin', 'PIN is required').not().isEmpty(),
+];
+
+exports.transferValidation = [
+    check('amount', 'Amount is required').not().isEmpty(),
+    check('pin', 'PIN is required').not().isEmpty(),
+    check('accountNumber', 'Account Number is required').not().isEmpty(),
+];

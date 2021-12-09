@@ -3,6 +3,7 @@ const Account = require('../models/Account');
 const User = require('../models/User');
 const TransactionHistory = require('../models/TransactionHistory');
 const { generateAccountNumber } = require('../utils');
+const AccountNumbers = require('../models/accountNumbers');
 
 /**
  * @desc creates a new bank account for the authenticated user
@@ -39,7 +40,8 @@ exports.createAccount = async function (req, res) {
     const account = new Account({
         owner: id,
         accountType,
-        pin
+        pin,
+        number: generateAccountNumber(),
     });
 
     try {
@@ -51,10 +53,6 @@ exports.createAccount = async function (req, res) {
         }
         return res.status(500).json({ message: 'Server error' });
     }
-
-    // generate account number
-    const accountNumber = await generateAccountNumber(account._id);
-    account.number = accountNumber;
 
     user.account = account._id;
     await user.save();
@@ -88,7 +86,6 @@ exports.deposit = async function (req, res) {
     if (!account) {
         return res.status(400).json({ msg: 'Bank Account not found' });
     }
-
     // check if user owns the account
     if (account.owner.toString() !== id) {
         return res.status(401).json({ msg: 'Unauthorized' });
@@ -176,4 +173,138 @@ exports.getHistory = async function (req, res) {
 
     const transactions = await TransactionHistory.find({ account: accountId });
     res.status(200).json({ transactions });
+};
+
+exports.withdrawal = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+    
+    const { id } = req.user;
+    const { accountId } = req.params;
+    const { amount, description, pin } = req.body;
+
+    // check if user has an account
+    let account;
+    try {
+        account = await Account.findById(accountId);
+    } catch (err) {
+        if (err.message.includes('Cast to ObjectId failed for value')) {
+            return res.status(400).json({ msg: 'Invalid account ID' });
+        }
+        return res.status(500).json({ message: 'Server error' });
+    }
+
+    if(!account) {
+        return res.status(404).json({ msg: 'Bank Account not found' });
+    }
+
+    if (account.owner.toString() !== id) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    if (account.balance < amount) {
+        return res.status(400).json({ msg: 'Insufficient funds' });
+    }
+
+    if (account.pin !== pin) {
+        return res.status(400).json({ msg: 'Invalid pin' });
+    }
+    // withdraw money
+    account.balance -= amount;
+    // create transaction history
+    const transaction = new TransactionHistory({
+        title: 'WITHDRAWAL',
+        type: 'DEBIT',
+        amount,
+        description,
+        account: accountId
+    });
+
+    await transaction.save();
+    account.transactions.push(transaction._id);
+    await account.save();
+    res.status(200).json({ msg: 'Withdrawal successful' });
+};
+
+exports.transfer = async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+    const { id } = req.user;
+    const { accountId } = req.params;
+    const { amount, description, pin, accountNumber } = req.body;
+
+    // check if user has an account
+    let account;
+    try {
+        account = await Account.findById(accountId);
+    }
+    catch (err) {
+        if (err.message.includes('Cast to ObjectId failed for value')) {
+            return res.status(400).json({ msg: 'Invalid account ID' });
+        }
+        return res.status(500).json({ message: 'Server error' });
+    }
+
+    if (!account) {
+        return res.status(404).json({ msg: 'Bank Account not found' });
+    }
+
+    if (account.owner.toString() !== id) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    if (account.balance < amount) {
+        return res.status(400).json({ msg: 'Insufficient funds' });
+    }
+
+    let receiverAccount;
+    try {
+        receiverAccount = await Account.findOne({ number: accountNumber });
+    } catch (err) {
+        return res.status(500).json({ message: 'Server error' });
+    }
+
+    if (!receiverAccount) {
+        return res.status(404).json({ msg: 'Invalid receiver account number' });
+    }
+
+    if (account.pin !== pin) {
+        return res.status(400).json({ msg: 'Invalid pin' });
+    }
+
+    account.balance -= amount;
+    receiverAccount.balance += amount;
+
+    // create transaction history
+    const receiverTransaction = new TransactionHistory({
+        title: 'TRANSFER',
+        type: 'CREDIT',
+        amount,
+        description,
+        account: receiverAccount._id
+    });
+
+    const senderTransaction = new TransactionHistory({
+        title: 'TRANSFER',
+        type: 'DEBIT',
+        amount,
+        description,
+        account: accountId
+    });
+
+    await receiverTransaction.save();
+    await senderTransaction.save();
+
+    account.transactions.push(senderTransaction._id);
+    receiverAccount.transactions.push(receiverTransaction._id);
+    
+    await account.save();
+    await receiverAccount.save();
+
+    res.status(200).json({ msg: 'Transfer successful' });
 };

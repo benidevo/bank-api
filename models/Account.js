@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { post } = require('../routes/accounts');
 const Schema = mongoose.Schema;
 
 const Type = {
