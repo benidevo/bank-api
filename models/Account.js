@@ -29,6 +29,10 @@ const AccountSchema = new Schema({
             ref: 'TransactionHistory'
         }
     ],
+    pin: {
+        type: Number,
+        default: null
+    },
     accountType: {
         type: String,
         enum: [Type.SAVINGS, Type.CURRENT],
