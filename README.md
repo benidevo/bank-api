@@ -1,8 +1,11 @@
 # Bank API
 
 ## Description
-A RESTFul API for a bank app that enables users to create a bank account (either savings or current account), deposit and withdraw money from their account and even transfer money to another account.
+A RESTFul API for a bank app that enables users to create a bank account (either savings or current account), deposit and withdraw money from their account and also transfer money to other accounts.
 
+- [Postman API Documentation](https://documenter.getpostman.com/view/15138887/UVR4MUjR)
+
+![Screenshot](bankAPI.png?raw=true "Bank API")
 ## Technologies 
 
 The following technologies were used in this project:
@@ -16,7 +19,12 @@ The following technologies were used in this project:
 
 ## Requirements
 
-Before starting, you need to have [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/) installed.
+Before starting, you need to have [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/) installed. Also ensure to create a .env file in the root directory of the project, and provide the following information:
+
+MONGO_URI: The URI of your MongoDB database.
+JWT_SECRET: The secret key used to sign the JWT.
+USERNAME: Mail server email address.
+PASSWORD: Mail server password.
 
 Kindly ensure that you are in the root directory before running the following commands.
 
