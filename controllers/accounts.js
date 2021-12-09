@@ -145,4 +145,35 @@ exports.getBalance = async function (req, res) {
     }
 
     res.status(200).json({ balance: account.balance });
-}
+};
+
+/**
+ * @desc retrieves transaction history for the authenticated user
+ */
+exports.getHistory = async function (req, res) {
+    const { id } = req.user;
+    const { accountId } = req.params;
+
+    // check if user has an account
+    let account;
+    try {
+        account = await Account.findById(accountId);
+    } catch (err) {
+        if (err.message.includes('Cast to ObjectId failed for value')) {
+            return res.status(400).json({ msg: 'Invalid account ID' });
+        }
+        return res.status(500).json({ message: 'Server error' });
+    }
+
+    if (!account) {
+        return res.status(404).json({ msg: 'Bank Account not found' });
+    }
+
+    // check if user owns the account
+    if (account.owner.toString() !== id) {
+        return res.status(401).json({ msg: 'Unauthorized' });
+    }
+
+    const transactions = await TransactionHistory.find({ account: accountId });
+    res.status(200).json({ transactions });
+};

@@ -7,7 +7,8 @@ const {
 const {
     createAccount,
     deposit,
-    getBalance
+    getBalance,
+    getHistory
 } = require('../controllers/accounts');
 const router = express.Router();
 
@@ -15,4 +16,6 @@ const router = express.Router();
 router.post('/', [auth, createAccountValidation], createAccount);
 router.post('/:accountId/deposit', [auth, depositValidation], deposit);
 router.get('/:accountId/balance', auth, getBalance);
+router.get('/:accountId/history', auth, getHistory);
+
 module.exports = router;
