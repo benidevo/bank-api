@@ -41,7 +41,7 @@ exports.createAccount = async function (req, res) {
         owner: id,
         accountType,
         pin,
-        number: generateAccountNumber(),
+        number: await generateAccountNumber(),
     });
 
     try {

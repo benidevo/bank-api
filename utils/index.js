@@ -29,11 +29,17 @@ exports.sendMail = async function (recipients, subject, text) {
     return 'message sent';
 };
 
-exports.generateAccountNumber = function () {
+exports.generateAccountNumber = async function () {
     let accountNumber = '22';
     for (let i = 0; i < 8; i++) {
         accountNumber += Math.floor(Math.random() * 10);
     }
 
+    const accountNumberFound = await AccountNumbers.findOne({ number: Number(accountNumber) });
+    while (accountNumberFound) {
+        generateAccountNumber();
+    }
+    const newAccountNumber = new AccountNumbers({ number: Number(accountNumber) });
+    await newAccountNumber.save();
     return Number(accountNumber);
 };
