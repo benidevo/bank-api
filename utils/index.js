@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const AccountNumbers = require('../models/accountNumbers');
+// const AccountNumbers = require('../models/accountNumbers');
 
 const USERNAME = process.env.USERNAME;
 const PASSWORD = process.env.PASSWORD;
@@ -35,11 +35,11 @@ exports.generateAccountNumber = async function () {
         accountNumber += Math.floor(Math.random() * 10);
     }
 
-    const accountNumberFound = await AccountNumbers.findOne({ number: Number(accountNumber) });
-    while (accountNumberFound) {
-        generateAccountNumber();
-    }
-    const newAccountNumber = new AccountNumbers({ number: Number(accountNumber) });
-    await newAccountNumber.save();
+    // const accountNumberFound = await AccountNumbers.findOne({ number: Number(accountNumber) });
+    // while (accountNumberFound) {
+    //     generateAccountNumber();
+    // }
+    // const newAccountNumber = new AccountNumbers({ number: Number(accountNumber) });
+    // await newAccountNumber.save();
     return Number(accountNumber);
 };

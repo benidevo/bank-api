@@ -3,7 +3,6 @@ const Account = require('../models/Account');
 const User = require('../models/User');
 const TransactionHistory = require('../models/TransactionHistory');
 const { generateAccountNumber } = require('../utils');
-const AccountNumbers = require('../models/accountNumbers');
 
 /**
  * @desc creates a new bank account for the authenticated user
